@@ -18,25 +18,22 @@ scaler = joblib.load(r"SL/Classification/scaler.joblib")
 from pydantic import BaseModel
  # Define a Pydantic model for input data validation
 class InputFeatures(BaseModel):
-    Year: int
-    Engine_Size: float
-    Mileage: float
-    Type: str
-    Make: str
-    Options: str
+    age: int
+    assists: float
+    days_injured: float
+    award: float
+    highest_value: float
+    
     
     
 def preprocessing(input_features: InputFeatures):
     dict_f = {
-            'Year': input_features.Year,
-            'Engine_Size': input_features.Engine_Size, 
-            'Mileage': input_features.Mileage, 
-            'Type_Accent': input_features.Type == 'Accent',
-            'Type_Land Cruiser': input_features.Type == 'LandCruiser',
-            'Make_Hyundai': input_features.Make == 'Hyundai',
-            'Make_Mercedes': input_features.Make == 'Mercedes',
-            'Options_Full': input_features.Options == 'Full',
-            'Options_Standard': input_features.Options == 'Standard'
+            'age': input_features.age,
+            'assists': input_features.assists, 
+            'days_injured': input_features.Mileage, 
+            'award': input_features.award,
+            'highest_value': input_features.highest_value,
+            
         }
     # Convert dictionary values to a list in the correct order
     features_list = [dict_f[key] for key in sorted(dict_f)]
