@@ -1,60 +1,47 @@
-# knn_api.py
-from fastapi import FastAPI
-from pydantic import BaseModel
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler
-import pandas as pd
-import joblib
-import os
+import streamlit as st
+import requests
 
-app = FastAPI()
+# Set up the Streamlit app
+st.title("Football Price range Prediction")
 
-# Load your dataset and define target and features
-dataset_path = "final_data.csv"  # Replace with the actual path to your dataset
-if os.path.exists(dataset_path):
-    df = pd.read_csv(dataset_path)
-else:
-    raise FileNotFoundError(f"The dataset file at {dataset_path} was not found.")
+# User inputs
+age = st.number_input("age", min_value=15, max_value=35, value=30)
+assists = st.number_input("assists", min_value=0, max_value=20, value=1)
+days_injured = st.number_input("days_injured", min_value=0, max_value=500, value=1)
+award = st.selectbox("award", min_value=0, max_value=500, value=1)  
+highest_value = st.selectbox("highest_value", min_value=0, max_value=50000000, value=1)  # Add other makes as needed
 
-# Ensure that df is loaded correctly
-y = df['price_range']
-X = df[['age', 'goals', 'assists', 'yellow cards', 'red cards', 
-        'goals_conceded', 'clean_sheets', 'minutes_played', 'days_injured',
-        'award', 'highest_value', 'winger'] + [col for col in df.columns if 'team_' in col]]
+# Prediction button
+if st.button("Predict Price range"):
+    # API request URL
 
-# Split the data and scale it
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-scaler = StandardScaler()
-X_train_scaled = scaler.fit_transform(X_train)
-X_test_scaled = scaler.transform(X_test)
+    url = "https://usecase-7uvicorn-main-app-host-0-0-0-0.onrender.com/predict"
+    
+    # Data for the POST request
+    data = {
+        "age": age,
+        "assists": assists,
+        "days_injured": days_injured,
+        "award": award,
+        "highest_value": highest_value
+        
+    }
 
-# Train and save KNN model and scaler
-knn = KNeighborsClassifier(n_neighbors=5)
-knn.fit(X_train_scaled, y_train)
-joblib.dump(scaler, "scaler.joblib")
-joblib.dump(knn, "knn_model.joblib")
+    # Send the POST request
+    try:
+        response = requests.post(url, json=data)
+        response.raise_for_status()  # Check for request errors
+        prediction = response.json()  # Parse JSON response
+        # {'Cheap_Price': 0, 'Good_Price': 1, 'High_Price': 2}
 
-# Define request model for prediction input
-class PredictionRequest(BaseModel):
-    age: float
-    goals: float
-    assists: float
-    yellow_cards: float
-    red_cards: float
-    goals_conceded: float
-    clean_sheets: float
-    minutes_played: float
-    days_injured: float
-    award: float
-    highest_value: float
-    winger: float
-    team_features: dict  # For team-related one-hot encoded features
-
-# Prediction endpoint
-@app.post("/predict")
-def predict_price_range(request: PredictionRequest):
-    # Convert request to DataFrame
-    data = [[request.age, request.goals, request.assists, request.yellow_cards, request.red_cards,
-             request.goals_conceded, request.clean_sheets, request.minutes_played, request.days_injured,]]
-       
+        if prediction['pred'] == 0:
+            prediction = "Cheap Price"
+        elif prediction['pred'] == 1:
+            prediction = "Good Price"
+        elif prediction['pred'] == 2:
+            prediction = "High Price"
+            
+        st.write(f"Estimated Price: {prediction}")
+    except requests.exceptions.RequestException as e:
+        st.error("Error requesting prediction from API. Please try again.")
+        st.write(e)
