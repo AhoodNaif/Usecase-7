@@ -12,8 +12,8 @@ def root():
     return "Welcome To Tuwaiq Academy Ahood"
 
 import joblib
-model = joblib.load(r"C:\Users\ohoud\OneDrive\Desktop\Tuwaiq\Usecase-7\SL\Classification\knn_model.joblib")
-scaler = joblib.load(r"C:\Users\ohoud\OneDrive\Desktop\Tuwaiq\Usecase-7\SL\Classification\scaler.joblib")
+model = joblib.load(r"SL/Classification/knn_model.joblib"")
+scaler = joblib.load(r"SL/Classification/scaler.joblib")
 
 from pydantic import BaseModel
  # Define a Pydantic model for input data validation
