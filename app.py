@@ -6,14 +6,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 import pandas as pd
 import joblib
+import os
 
 app = FastAPI()
 
-# Load your dataset and model initialization
-df = pd.read_csv('your_dataset.csv')  # Replace with actual dataset file
+# Load your dataset and define target and features
+dataset_path = "final_data.csv"  # Replace with the actual path to your dataset
+if os.path.exists(dataset_path):
+    df = pd.read_csv(dataset_path)
+else:
+    raise FileNotFoundError(f"The dataset file at {dataset_path} was not found.")
+
+# Ensure that df is loaded correctly
 y = df['price_range']
 X = df[['age', 'goals', 'assists', 'yellow cards', 'red cards', 
-        'goals conceded', 'clean sheets', 'minutes played', 'days_injured',
+        'goals_conceded', 'clean_sheets', 'minutes_played', 'days_injured',
         'award', 'highest_value', 'winger'] + [col for col in df.columns if 'team_' in col]]
 
 # Split the data and scale it
@@ -22,15 +29,13 @@ scaler = StandardScaler()
 X_train_scaled = scaler.fit_transform(X_train)
 X_test_scaled = scaler.transform(X_test)
 
-# Train KNN model
+# Train and save KNN model and scaler
 knn = KNeighborsClassifier(n_neighbors=5)
 knn.fit(X_train_scaled, y_train)
-
-# Save scaler and model to avoid retraining
 joblib.dump(scaler, "scaler.joblib")
 joblib.dump(knn, "knn_model.joblib")
 
-# Define request model
+# Define request model for prediction input
 class PredictionRequest(BaseModel):
     age: float
     goals: float
@@ -51,14 +56,5 @@ class PredictionRequest(BaseModel):
 def predict_price_range(request: PredictionRequest):
     # Convert request to DataFrame
     data = [[request.age, request.goals, request.assists, request.yellow_cards, request.red_cards,
-             request.goals_conceded, request.clean_sheets, request.minutes_played, request.days_injured,
-             request.award, request.highest_value, request.winger] + list(request.team_features.values())]
-
-    # Load scaler and model
-    scaler = joblib.load("scaler.joblib")
-    knn = joblib.load("knn_model.joblib")
-
-    # Scale data and predict
-    data_scaled = scaler.transform(data)
-    prediction = knn.predict(data_scaled)
-    return {"price_range": prediction[0]}
+             request.goals_conceded, request.clean_sheets, request.minutes_played, request.days_injured,]]
+       
