@@ -29,12 +29,20 @@ if st.button("Predict Price Range"):
     try:
         response = requests.post(url, json=data)
         response.raise_for_status()  # Check for request errors
-        prediction = response.json()  # Parse JSON response
         
-        # Interpret the prediction
-        price_range = {0: "Cheap Price", 1: "Good Price", 2: "High Price"}
-        st.write(f"Estimated Price: {price_range[prediction['pred']]}")
+        # Check if 'pred' exists in the response JSON
+        if "pred" in response.json():
+            prediction = response.json()["pred"]
+            
+            # Interpret the prediction
+            price_range = {0: "Cheap Price", 1: "Good Price", 2: "High Price"}
+            st.write(f"Estimated Price: {price_range.get(prediction, 'Unknown Price Range')}")
+        else:
+            st.error("Prediction not found in API response.")
         
     except requests.exceptions.RequestException as e:
         st.error("Error requesting prediction from API. Please try again.")
         st.write(e)
+    except KeyError as e:
+        st.error("Unexpected response format.")
+        st.write(f"Error: {e}")
