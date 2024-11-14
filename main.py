@@ -12,7 +12,7 @@ def root():
     return "Welcome To Tuwaiq Academy Ahood"
 
 import joblib
-model = joblib.load(r"SL/Classification/knn_model.joblib"")
+model = joblib.load(r"SL/Classification/knn_model.joblib")
 scaler = joblib.load(r"SL/Classification/scaler.joblib")
 
 from pydantic import BaseModel
