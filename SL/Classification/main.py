@@ -13,8 +13,8 @@ app = FastAPI()
 
 try:
     # Load model and scaler
-    model = joblib.load(r"SL/Classification/knn_model.joblib")
-    scaler = joblib.load(r"SL/Classification/scaler.joblib")
+    model = joblib.load(r"knn_model.joblib")
+    scaler = joblib.load(r"scaler.joblib")
 except Exception as e:
     raise RuntimeError(f"Error loading model or scaler: {e}")
 
