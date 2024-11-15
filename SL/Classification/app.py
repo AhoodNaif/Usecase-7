@@ -6,6 +6,13 @@ st.title("Football Price Range Prediction")
 
 # User inputs
 age = st.number_input("Age", min_value=15, max_value=35, value=30)
+goals=st.number_input("Goals",min_value=0,max_value=50,value=0)
+goals_conceded=st.number_input("goals conceded",min_value=0,max_value=50,value=0)
+clean_sheets=st.number_input("clean sheets",min_value=0,max_value=50,value=0)
+minutes_played=st.number_input("minutes played",min_value=0,max_value=50,value=0)
+winger=st.number_input("winger",min_value=0,max_value=50,value=0)
+red_cards=st.number_input("red cards",min_value=0,max_value=50,value=0)
+yellow_cards=st.number_input("yellow cards",min_value=0,max_value=50,value=0)
 assists = st.number_input("Assists", min_value=0, max_value=20, value=1)
 days_injured = st.number_input("Days Injured", min_value=0, max_value=500, value=1)
 award = st.number_input("Awards", min_value=0, max_value=500, value=1)

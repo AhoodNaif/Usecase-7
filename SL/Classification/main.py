@@ -30,16 +30,27 @@ class InputFeatures(BaseModel):
     award: float
     highest_value: float
 
-def preprocessing(input_features: InputFeatures):
+def preprocessing(input_features):
     try:
         # Convert input features to a dictionary
         dict_f = {
             'age': input_features.age,
-            'assists': input_features.assists, 
-            'days_injured': input_features.days_injured, 
+            'goals': input_features.goals,
+            'goals conceded': input_features.goals_conceded,
+            'clean sheets': input_features.clean_sheets,
+            'minutes played': input_features.minutes_played,
+            'days_injured': input_features.days_injured,
             'award': input_features.award,
             'highest_value': input_features.highest_value,
+            'winger': input_features.winger,
+            'assists': input_features.assists,
+            'red cards': input_features.red_cards,
+            'yellow cards': input_features.yellow_cards
         }
+        return dict_f
+    except AttributeError as e:
+        print(f"An error occurred: {e}")
+
         
         # Scale the input features
         scaled_features = scaler.transform([list(dict_f.values())])
