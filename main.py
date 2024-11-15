@@ -25,6 +25,13 @@ def root():
 # Define a Pydantic model for input data validation
 class InputFeatures(BaseModel):
     age: int
+    goals:int
+    goals_conceded:int
+    clean_sheets:int
+    minutes_played:int
+    winger:int
+    red_cards:int
+    yellow_cards:int
     assists: float
     days_injured: float
     award: float
