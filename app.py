@@ -29,7 +29,14 @@ if st.button("Predict Price Range"):
         "assists": assists,
         "days_injured": days_injured,
         "award": award,
-        "highest_value": highest_value
+        "highest_value": highest_value,
+        'goals': goals,
+        'goals conceded': goals_conceded,
+        'clean sheets': clean_sheets,
+        'minutes played': minutes_played,
+        'winger': winger,
+        'red cards': red_cards,
+        'yellow cards': yellow_cards
     }
 
     # Send the POST request
